@@ -61,6 +61,6 @@ jobs:
       working-directory: ./terraform/dev
       
     - name: Terraform Destroy Dev Environment
-      if: ${{ vars.DEV_DESTROY }} == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform destroy
+      if: ${{ vars.DEV_DESTROY }} == true && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform destroy -auto-approve -input=false
       working-directory: ./terraform/dev
