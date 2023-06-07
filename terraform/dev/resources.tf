@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "rg-data-platform" {
 
 # Storage Account
 resource "azurerm_storage_account" "sa-data-platform" {
-  name                     = "sharifstoragedataplatform"
+  name                     = "sharifstdataplatform"
   resource_group_name      = azurerm_resource_group.rg-data-platform.name
   location                 = azurerm_resource_group.rg-data-platform.name
   account_tier             = "Standard"
