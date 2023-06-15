@@ -66,12 +66,12 @@ resource "azurerm_subnet" "mysql-sn" {
   }
 }
 
-resource "azurerm_private_dns_zone" "mysql-dns" {
-  name                = "sharifdb.mysql.database.azure.com"
+resource "azurerm_private_dns_zone" "db-dns" {
+  name                = "sharifdb.postgres.database.azure.com"
   resource_group_name = azurerm_resource_group.rg-data-platform.name
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "mysql-nl" {
+resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
   name                  = "sharifVnetZone.com"
   private_dns_zone_name = azurerm_private_dns_zone.mysql-dns.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
@@ -80,17 +80,22 @@ resource "azurerm_private_dns_zone_virtual_network_link" "mysql-nl" {
 
 # Databases
 
-resource "azurerm_mysql_flexible_server" "sharifmysql" {
-  name                   = "sharifmysql"
+resource "azurerm_postgresql_flexible_server" "db-server" {
+  name                   = "sharif-psqlflexibleserver"
   resource_group_name    = azurerm_resource_group.rg-data-platform.name
   location               = azurerm_resource_group.rg-data-platform.location
+  version                = "12"
+  delegated_subnet_id    = azurerm_subnet.mysql-sn.id
+  private_dns_zone_id    = azurerm_private_dns_zone.db-dns.id
   administrator_login    = "psqladmin"
   administrator_password = "H@Sh1CoR3!"
-  backup_retention_days  = 7
-  delegated_subnet_id    = azurerm_subnet.mysql-sn.id
-  private_dns_zone_id    = azurerm_private_dns_zone.mysql-dns.id
-  sku_name               = "B_Standard_B1s"
-  depends_on             = [azurerm_private_dns_zone_virtual_network_link.mysql-nl]
+  zone                   = "1"
+
+  storage_mb = 32768
+
+  sku_name   = "B_Standard_B1s"
+  depends_on = [azurerm_private_dns_zone_virtual_network_link.db-nl]
+
 }
 
 # ADF Resource Group
