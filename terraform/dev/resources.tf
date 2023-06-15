@@ -44,7 +44,7 @@ resource "azurerm_databricks_workspace" "databricks-workspace" {
 # Virtual Network
 resource "azurerm_virtual_network" "vnet" {
   name                = "data-platform-vn"
-  location            = azurerm_resource_group.rg-data-platform.location
+  location            = "eastasia"
   resource_group_name = azurerm_resource_group.rg-data-platform.name
   address_space       = ["10.0.0.0/16"]
 }
