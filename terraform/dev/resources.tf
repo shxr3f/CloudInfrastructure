@@ -41,6 +41,58 @@ resource "azurerm_databricks_workspace" "databricks-workspace" {
   }
 }
 
+# Virtual Network
+resource "azurerm_virtual_network" "vnet" {
+  name                = "data-platform-vn"
+  location            = azurerm_resource_group.rg-data-platform.location
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "mysql-sn" {
+  name                 = "mysql-sn"
+  resource_group_name  = azurerm_resource_group.rg-data-platform.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.2.0/24"]
+  service_endpoints    = ["Microsoft.Storage"]
+  delegation {
+    name = "fs"
+    service_delegation {
+      name = "Microsoft.DBforMySQL/flexibleServers"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
+resource "azurerm_private_dns_zone" "mysql-dns" {
+  name                = "sharifmysql.mysql.database.azure.com"
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "mysql-nl" {
+  name                  = "sharifVnetZone.com"
+  private_dns_zone_name = azurerm_private_dns_zone.mysql-dns.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+  resource_group_name   = azurerm_resource_group.rg-data-platform.name
+}
+
+# Databases
+
+resource "azurerm_mysql_flexible_server" "sharifmysql" {
+  name                   = "sharifmysql"
+  resource_group_name    = azurerm_resource_group.rg-data-platform.name
+  location               = azurerm_resource_group.rg-data-platform.location
+  administrator_login    = "psqladmin"
+  administrator_password = "H@Sh1CoR3!"
+  backup_retention_days  = 7
+  delegated_subnet_id    = azurerm_subnet.mysql-sn.id
+  private_dns_zone_id    = azurerm_private_dns_zone.mysql-dns.id
+  sku_name               = "B_Standard_B1s"
+  depends_on = [azurerm_private_dns_zone_virtual_network_link.mysql-nl]
+}
+
 # ADF Resource Group
 resource "azurerm_resource_group" "rg-data-projects" {
   name     = "rg-data-projects"
