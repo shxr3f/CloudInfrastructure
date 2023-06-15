@@ -41,148 +41,148 @@ resource "azurerm_databricks_workspace" "databricks-workspace" {
   }
 }
 
-# Virtual Network
-resource "azurerm_virtual_network" "vnet" {
-  name                = "data-platform-vn"
-  location            = "eastasia"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
-  address_space       = ["10.0.0.0/16"]
-}
+# # Virtual Network
+# resource "azurerm_virtual_network" "vnet" {
+#   name                = "data-platform-vn"
+#   location            = "eastasia"
+#   resource_group_name = azurerm_resource_group.rg-data-platform.name
+#   address_space       = ["10.0.0.0/16"]
+# }
 
-resource "azurerm_subnet" "db-sn" {
-  name                 = "db-sn"
-  resource_group_name  = azurerm_resource_group.rg-data-platform.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
-  service_endpoints    = ["Microsoft.Storage"]
-  delegation {
-    name = "fs"
-    service_delegation {
-      name = "Microsoft.DBforPostgreSQL/flexibleServers"
-      actions = [
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-      ]
-    }
-  }
-}
+# resource "azurerm_subnet" "db-sn" {
+#   name                 = "db-sn"
+#   resource_group_name  = azurerm_resource_group.rg-data-platform.name
+#   virtual_network_name = azurerm_virtual_network.vnet.name
+#   address_prefixes     = ["10.0.2.0/24"]
+#   service_endpoints    = ["Microsoft.Storage"]
+#   delegation {
+#     name = "fs"
+#     service_delegation {
+#       name = "Microsoft.DBforPostgreSQL/flexibleServers"
+#       actions = [
+#         "Microsoft.Network/virtualNetworks/subnets/join/action",
+#       ]
+#     }
+#   }
+# }
 
-resource "azurerm_subnet" "vm-sn" {
-  name                 = "vm-sn"
-  resource_group_name  = azurerm_resource_group.rg-data-platform.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.3.0/24"]
-}
+# resource "azurerm_subnet" "vm-sn" {
+#   name                 = "vm-sn"
+#   resource_group_name  = azurerm_resource_group.rg-data-platform.name
+#   virtual_network_name = azurerm_virtual_network.vnet.name
+#   address_prefixes     = ["10.0.3.0/24"]
+# }
 
-resource "azurerm_public_ip" "vm-publicip" {
-  name                = "vm-publicip"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
-  location            = "eastasia"
-  allocation_method   = "Static"
+# resource "azurerm_public_ip" "vm-publicip" {
+#   name                = "vm-publicip"
+#   resource_group_name = azurerm_resource_group.rg-data-platform.name
+#   location            = "eastasia"
+#   allocation_method   = "Static"
 
-  tags = {
-    environment = "Dev"
-  }
-}
+#   tags = {
+#     environment = "Dev"
+#   }
+# }
 
-resource "azurerm_network_security_group" "vm-nsg" {
-  name                = "vm-nsg"
-  location            = "eastasia"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
+# resource "azurerm_network_security_group" "vm-nsg" {
+#   name                = "vm-nsg"
+#   location            = "eastasia"
+#   resource_group_name = azurerm_resource_group.rg-data-platform.name
 
-  security_rule {
-    name                       = "allowinbound"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+#   security_rule {
+#     name                       = "allowinbound"
+#     priority                   = 100
+#     direction                  = "Inbound"
+#     access                     = "Allow"
+#     protocol                   = "Tcp"
+#     source_port_range          = "*"
+#     destination_port_range     = "*"
+#     source_address_prefix      = "*"
+#     destination_address_prefix = "*"
+#   }
 
-  tags = {
-    environment = "Dev"
-  }
-}
+#   tags = {
+#     environment = "Dev"
+#   }
+# }
 
-resource "azurerm_network_interface" "vm-nic" {
-  name                = "vm-nic"
-  location            = "eastasia"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
+# resource "azurerm_network_interface" "vm-nic" {
+#   name                = "vm-nic"
+#   location            = "eastasia"
+#   resource_group_name = azurerm_resource_group.rg-data-platform.name
 
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.vm-sn.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm-publicip.id
-  }
-}
+#   ip_configuration {
+#     name                          = "internal"
+#     subnet_id                     = azurerm_subnet.vm-sn.id
+#     private_ip_address_allocation = "Dynamic"
+#     public_ip_address_id          = azurerm_public_ip.vm-publicip.id
+#   }
+# }
 
-resource "azurerm_network_interface_security_group_association" "vm-nsg-assoc" {
-  network_interface_id      = azurerm_network_interface.vm-nic.id
-  network_security_group_id = azurerm_network_security_group.vm-nsg.id
-}
+# resource "azurerm_network_interface_security_group_association" "vm-nsg-assoc" {
+#   network_interface_id      = azurerm_network_interface.vm-nic.id
+#   network_security_group_id = azurerm_network_security_group.vm-nsg.id
+# }
 
-resource "azurerm_private_dns_zone" "db-dns" {
-  name                = "sharifdb.postgres.database.azure.com"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
-}
+# resource "azurerm_private_dns_zone" "db-dns" {
+#   name                = "sharifdb.postgres.database.azure.com"
+#   resource_group_name = azurerm_resource_group.rg-data-platform.name
+# }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
-  name                  = "sharifVnetZone.com"
-  private_dns_zone_name = azurerm_private_dns_zone.db-dns.name
-  virtual_network_id    = azurerm_virtual_network.vnet.id
-  resource_group_name   = azurerm_resource_group.rg-data-platform.name
-}
+# resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
+#   name                  = "sharifVnetZone.com"
+#   private_dns_zone_name = azurerm_private_dns_zone.db-dns.name
+#   virtual_network_id    = azurerm_virtual_network.vnet.id
+#   resource_group_name   = azurerm_resource_group.rg-data-platform.name
+# }
 
-# Virtual Machine as JumpHost
+# # Virtual Machine as JumpHost
 
-resource "azurerm_linux_virtual_machine" "general-vm" {
-  name                            = "general-vm"
-  resource_group_name             = azurerm_resource_group.rg-data-platform.name
-  location                        = "eastasia"
-  size                            = "Standard_B1s"
-  admin_username                  = "adminuser"
-  admin_password                  = "H@Sh1CoR3"
-  disable_password_authentication = false
-  network_interface_ids = [
-    azurerm_network_interface.vm-nic.id,
-  ]
+# resource "azurerm_linux_virtual_machine" "general-vm" {
+#   name                            = "general-vm"
+#   resource_group_name             = azurerm_resource_group.rg-data-platform.name
+#   location                        = "eastasia"
+#   size                            = "Standard_B1s"
+#   admin_username                  = "adminuser"
+#   admin_password                  = "H@Sh1CoR3"
+#   disable_password_authentication = false
+#   network_interface_ids = [
+#     azurerm_network_interface.vm-nic.id,
+#   ]
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
+#   os_disk {
+#     caching              = "ReadWrite"
+#     storage_account_type = "Standard_LRS"
+#   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
-    version   = "latest"
-  }
-}
+#   source_image_reference {
+#     publisher = "Canonical"
+#     offer     = "0001-com-ubuntu-server-focal"
+#     sku       = "20_04-lts"
+#     version   = "latest"
+#   }
+# }
 
 
-# Databases
+# # Databases
 
-resource "azurerm_postgresql_flexible_server" "db-server" {
-  name                   = "sharif-psqlflexibleserver"
-  resource_group_name    = azurerm_resource_group.rg-data-platform.name
-  location               = "eastasia"
-  version                = "12"
-  delegated_subnet_id    = azurerm_subnet.db-sn.id
-  private_dns_zone_id    = azurerm_private_dns_zone.db-dns.id
-  administrator_login    = "psqladmin"
-  administrator_password = "H@Sh1CoR3!"
-  zone                   = "1"
+# resource "azurerm_postgresql_flexible_server" "db-server" {
+#   name                   = "sharif-psqlflexibleserver"
+#   resource_group_name    = azurerm_resource_group.rg-data-platform.name
+#   location               = "eastasia"
+#   version                = "12"
+#   delegated_subnet_id    = azurerm_subnet.db-sn.id
+#   private_dns_zone_id    = azurerm_private_dns_zone.db-dns.id
+#   administrator_login    = "psqladmin"
+#   administrator_password = "H@Sh1CoR3!"
+#   zone                   = "1"
 
-  storage_mb = 32768
+#   storage_mb = 32768
 
-  sku_name   = "B_Standard_B1ms"
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.db-nl]
+#   sku_name   = "B_Standard_B1ms"
+#   depends_on = [azurerm_private_dns_zone_virtual_network_link.db-nl]
 
-}
+# }
 
 # ADF Resource Group
 resource "azurerm_resource_group" "rg-data-projects" {
