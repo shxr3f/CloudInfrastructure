@@ -58,7 +58,7 @@ resource "azurerm_subnet" "db-sn" {
   delegation {
     name = "fs"
     service_delegation {
-      name = "Microsoft.DBforMySQL/flexibleServers"
+      name = "Microsoft.DBforPostgreSQL/flexibleServers"
       actions = [
         "Microsoft.Network/virtualNetworks/subnets/join/action",
       ]
