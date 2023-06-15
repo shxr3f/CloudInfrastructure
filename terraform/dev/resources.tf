@@ -90,7 +90,7 @@ resource "azurerm_mysql_flexible_server" "sharifmysql" {
   delegated_subnet_id    = azurerm_subnet.mysql-sn.id
   private_dns_zone_id    = azurerm_private_dns_zone.mysql-dns.id
   sku_name               = "B_Standard_B1s"
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.mysql-nl]
+  depends_on             = [azurerm_private_dns_zone_virtual_network_link.mysql-nl]
 }
 
 # ADF Resource Group
