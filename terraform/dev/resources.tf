@@ -100,12 +100,12 @@ resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
 # Virtual Machine as JumpHost
 
 resource "azurerm_linux_virtual_machine" "general-vm" {
-  name                = "general-vm"
-  resource_group_name = azurerm_resource_group.rg-data-platform.name
-  location            = "eastasia"
-  size                = "Standard_B1s"
-  admin_username      = "adminuser"
-  admin_password      = "H@Sh1CoR3"
+  name                            = "general-vm"
+  resource_group_name             = azurerm_resource_group.rg-data-platform.name
+  location                        = "eastasia"
+  size                            = "Standard_B1s"
+  admin_username                  = "adminuser"
+  admin_password                  = "H@Sh1CoR3"
   disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.vm-nic.id,
