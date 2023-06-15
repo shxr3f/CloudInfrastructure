@@ -83,7 +83,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
 resource "azurerm_postgresql_flexible_server" "db-server" {
   name                   = "sharif-psqlflexibleserver"
   resource_group_name    = azurerm_resource_group.rg-data-platform.name
-  location               = azurerm_resource_group.rg-data-platform.location
+  location               = "eastasia"
   version                = "12"
   delegated_subnet_id    = azurerm_subnet.mysql-sn.id
   private_dns_zone_id    = azurerm_private_dns_zone.db-dns.id
