@@ -66,6 +66,25 @@ resource "azurerm_subnet" "db-sn" {
   }
 }
 
+resource "azurerm_subnet" "vm-sn" {
+  name                 = "vm-sn"
+  resource_group_name  = azurerm_resource_group.rg-data-platform.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.3.0/24"]
+}
+
+resource "azurerm_network_interface" "vm-nic" {
+  name                = "vm-nic"
+  location            = "eastasia"
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.vm-sn.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
 resource "azurerm_private_dns_zone" "db-dns" {
   name                = "sharifdb.postgres.database.azure.com"
   resource_group_name = azurerm_resource_group.rg-data-platform.name
@@ -77,6 +96,33 @@ resource "azurerm_private_dns_zone_virtual_network_link" "db-nl" {
   virtual_network_id    = azurerm_virtual_network.vnet.id
   resource_group_name   = azurerm_resource_group.rg-data-platform.name
 }
+
+# Virtual Machine as JumpHost
+
+resource "azurerm_linux_virtual_machine" "general-vm" {
+  name                = "general-vm"
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+  location            = "eastasia"
+  size                = "Standard_B1s"
+  admin_username      = "adminuser"
+  admin_password      = "H@Sh1CoR3"
+  network_interface_ids = [
+    azurerm_network_interface.vm-nic.id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
+    version   = "latest"
+  }
+}
+
 
 # Databases
 
