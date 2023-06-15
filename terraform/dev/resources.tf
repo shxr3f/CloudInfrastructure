@@ -73,6 +73,39 @@ resource "azurerm_subnet" "vm-sn" {
   address_prefixes     = ["10.0.3.0/24"]
 }
 
+resource "azurerm_public_ip" "vm-publicip" {
+  name                = "vm-publicip"
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+  location            = "eastasia"
+  allocation_method   = "Static"
+
+  tags = {
+    environment = "Dev"
+  }
+}
+
+resource "azurerm_network_security_group" "vm-nsg" {
+  name                = "vm-nsg"
+  location            = "eastasia"
+  resource_group_name = azurerm_resource_group.rg-data-platform.name
+
+  security_rule {
+    name                       = "allowinbound"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    environment = "Dev"
+  }
+}
+
 resource "azurerm_network_interface" "vm-nic" {
   name                = "vm-nic"
   location            = "eastasia"
@@ -82,7 +115,13 @@ resource "azurerm_network_interface" "vm-nic" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.vm-sn.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.vm-publicip.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "vm-nsg-assoc" {
+  network_interface_id      = azurerm_network_interface.vm-nic.id
+  network_security_group_id = azurerm_network_security_group.vm-nsg.id
 }
 
 resource "azurerm_private_dns_zone" "db-dns" {
