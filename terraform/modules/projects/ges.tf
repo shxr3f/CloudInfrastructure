@@ -33,12 +33,10 @@ resource "azurerm_data_factory_linked_service_azure_databricks" "ls-adf-azd" {
   resource_group_name        = var.resource_group_name
   msi_work_space_resource_id = var.azurerm_databricks_workspace_scope
 
-  new_cluster_config {
-    node_type             = "Standard_DS3_v2"
-    cluster_version       = "12.2.x-scala2.12"
-    min_number_of_workers = 1
+  instance_pool {
+    instance_pool_id = "0620-071934-tiled1-pool-kkmy66f4"
+    cluster_version = "13.1.x-scala2.12"
     max_number_of_workers = 1
-    driver_node_type      = "Standard_DS3_v2"
   }
 }
 
