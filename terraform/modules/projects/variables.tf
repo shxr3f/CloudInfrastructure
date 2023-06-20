@@ -29,3 +29,8 @@ variable "azurerm_databricks_workspace_id" {
   type        = string
   description = "ID of AZD Workspace"
 }
+
+variable "azurerm_storage_account_id" {
+  type        = string
+  description = "ID of Storage Account"
+}

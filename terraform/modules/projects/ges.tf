@@ -30,15 +30,15 @@ resource "azurerm_data_factory_linked_service_azure_databricks" "ls-adf-azd" {
   }
 }
 
-resource "azurerm_data_factory_pipeline" "test-pipeline" {
-  name                = "testPipeline"
+resource "azurerm_data_factory_pipeline" "nus-pipeline" {
+  name                = "nusPipeline"
   data_factory_id     = azurerm_data_factory.ges-adf.id
   resource_group_name = var.resource_group_name
 
   activities_json = <<JSON
   [
     {
-        "name": "testDatabricks",
+        "name": "nusDatabricks",
         "type": "DatabricksNotebook",
         "dependsOn": [],
         "policy": {
@@ -59,4 +59,24 @@ resource "azurerm_data_factory_pipeline" "test-pipeline" {
     }
   ]
   JSON
+}
+
+resource "azurerm_data_factory_trigger_blob_event" "blob-trigger" {
+  name                  = "fileDropped"
+  data_factory_id       = azurerm_data_factory.ges-adf.od
+  storage_account_id    = var.azurerm_storage_account_id
+  events                = ["Microsoft.Storage.BlobCreated"]
+  blob_path_begins_with = "landing/ges/nus"
+  blob_path_ends_with   = ".pdf"
+  ignore_empty_blobs    = true
+  activated             = true
+
+  description = "example description"
+
+  pipeline {
+    name = azurerm_data_factory_pipeline.nus-pipeline.name
+    parameters = {
+      Env = "Dev"
+    }
+  }
 }
