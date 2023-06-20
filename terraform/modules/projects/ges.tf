@@ -63,7 +63,7 @@ resource "azurerm_data_factory_pipeline" "nus-pipeline" {
 
 resource "azurerm_data_factory_trigger_blob_event" "blob-trigger" {
   name                  = "fileDropped"
-  data_factory_id       = azurerm_data_factory.ges-adf.od
+  data_factory_id       = azurerm_data_factory.ges-adf.id
   storage_account_id    = var.azurerm_storage_account_id
   events                = ["Microsoft.Storage.BlobCreated"]
   blob_path_begins_with = "landing/ges/nus"
