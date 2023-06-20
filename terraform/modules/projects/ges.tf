@@ -32,12 +32,7 @@ resource "azurerm_data_factory_linked_service_azure_databricks" "ls-adf-azd" {
   adb_domain                 = "https://${var.azurerm_databricks_workspace_url}"
   resource_group_name        = var.resource_group_name
   msi_work_space_resource_id = var.azurerm_databricks_workspace_scope
-
-  instance_pool {
-    instance_pool_id = "0620-071934-tiled1-pool-kkmy66f4"
-    cluster_version = "13.1.x-scala2.12"
-    max_number_of_workers = 1
-  }
+  existing_cluster_id        = "0620-073444-wjgzz4vq"
 }
 
 resource "azurerm_data_factory_pipeline" "nus-pipeline" {
