@@ -33,7 +33,7 @@ resource "azurerm_storage_container" "archive-container" {
 resource "azurerm_databricks_workspace" "databricks-workspace" {
   name                = "databricks-workspace"
   resource_group_name = azurerm_resource_group.rg-data-platform.name
-  location            = azurerm_resource_group.rg-data-platform.location
+  location            = "eastasia"
   sku                 = "premium"
 
   public_network_access_enabled = true
