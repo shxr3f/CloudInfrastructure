@@ -83,7 +83,6 @@ resource "azurerm_linux_virtual_machine" "general-vm" {
 
 
 # Databases
-
 resource "azurerm_postgresql_flexible_server" "db-server" {
   name                   = "sharif-psqlflexibleserver"
   resource_group_name    = azurerm_resource_group.rg-data-platform.name
@@ -100,6 +99,13 @@ resource "azurerm_postgresql_flexible_server" "db-server" {
   sku_name   = "B_Standard_B1ms"
   depends_on = [azurerm_private_dns_zone_virtual_network_link.db-nl]
 
+}
+
+resource "azurerm_postgresql_flexible_server_database" "database" {
+  name      = "dataplatform"
+  server_id = azurerm_postgresql_flexible_server.db-server.id
+  collation = "en_US.utf8"
+  charset   = "utf8"
 }
 
 # ADF Resource Group
