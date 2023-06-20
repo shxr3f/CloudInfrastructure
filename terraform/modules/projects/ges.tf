@@ -13,6 +13,18 @@ resource "azurerm_role_assignment" "adf-azd-role" {
   principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
 }
 
+resource "azurerm_role_assignment" "adf-sa-role" {
+  scope                = var.azurerm_storage_account_id
+  role_definition_name = "Storage Blob Contributor"
+  principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "adf-sa-role" {
+  scope                = var.azurerm_storage_account_id
+  role_definition_name = "Storage Blob Reader"
+  principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
+}
+
 resource "azurerm_data_factory_linked_service_azure_databricks" "ls-adf-azd" {
   name                       = "linked-service-databricks"
   data_factory_id            = azurerm_data_factory.ges-adf.id
@@ -66,7 +78,7 @@ resource "azurerm_data_factory_trigger_blob_event" "blob-trigger" {
   data_factory_id       = azurerm_data_factory.ges-adf.id
   storage_account_id    = var.azurerm_storage_account_id
   events                = ["Microsoft.Storage.BlobCreated"]
-  blob_path_begins_with = "landing/ges/nus"
+  blob_path_begins_with = "/landing/blobs/ges/nus/"
   blob_path_ends_with   = ".pdf"
   ignore_empty_blobs    = true
   activated             = true
