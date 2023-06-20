@@ -13,13 +13,13 @@ resource "azurerm_role_assignment" "adf-azd-role" {
   principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
 }
 
-resource "azurerm_role_assignment" "adf-sa-role" {
+resource "azurerm_role_assignment" "adf-sa-contributor-role" {
   scope                = var.azurerm_storage_account_id
   role_definition_name = "Storage Blob Contributor"
   principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
 }
 
-resource "azurerm_role_assignment" "adf-sa-role" {
+resource "azurerm_role_assignment" "adf-sa-reader-role" {
   scope                = var.azurerm_storage_account_id
   role_definition_name = "Storage Blob Reader"
   principal_id         = azurerm_data_factory.ges-adf.identity[0].principal_id
