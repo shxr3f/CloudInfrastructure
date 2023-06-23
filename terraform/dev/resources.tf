@@ -115,13 +115,13 @@ resource "azurerm_resource_group" "rg-data-projects" {
 }
 
 # Projects
-# module "data-projects" {
-#   source                             = "../modules/projects"
-#   resource_group_name                = azurerm_resource_group.rg-data-projects.name
-#   environment                        = "dev"
-#   location                           = azurerm_resource_group.rg-data-projects.location
-#   azurerm_databricks_workspace_scope = azurerm_databricks_workspace.databricks-workspace.id
-#   azurerm_databricks_workspace_url   = azurerm_databricks_workspace.databricks-workspace.workspace_url
-#   azurerm_databricks_workspace_id    = azurerm_databricks_workspace.databricks-workspace.workspace_id
-#   azurerm_storage_account_id         = azurerm_storage_account.sa-data-platform.id
-# }
+module "data-projects" {
+  source                             = "../modules/projects"
+  resource_group_name                = azurerm_resource_group.rg-data-projects.name
+  environment                        = "dev"
+  location                           = azurerm_resource_group.rg-data-projects.location
+  azurerm_databricks_workspace_scope = azurerm_databricks_workspace.databricks-workspace.id
+  azurerm_databricks_workspace_url   = azurerm_databricks_workspace.databricks-workspace.workspace_url
+  azurerm_databricks_workspace_id    = azurerm_databricks_workspace.databricks-workspace.workspace_id
+  azurerm_storage_account_id         = azurerm_storage_account.sa-data-platform.id
+}

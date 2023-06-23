@@ -32,7 +32,7 @@ resource "azurerm_data_factory_linked_service_azure_databricks" "ls-adf-azd" {
   adb_domain                 = "https://${var.azurerm_databricks_workspace_url}"
   resource_group_name        = var.resource_group_name
   msi_work_space_resource_id = var.azurerm_databricks_workspace_scope
-  existing_cluster_id        = "0620-073444-wjgzz4vq"
+  existing_cluster_id        = "0623-001251-mkhaqk2z"
 }
 
 resource "azurerm_data_factory_pipeline" "nus-pipeline" {
@@ -64,6 +64,7 @@ resource "azurerm_data_factory_pipeline" "nus-pipeline" {
     }
   ]
   JSON
+  depends_on = [azurerm_data_factory_linked_service_azure_databricks.ls-adf-azd]
 }
 
 resource "azurerm_data_factory_trigger_blob_event" "blob-trigger" {
